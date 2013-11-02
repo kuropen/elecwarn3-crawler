@@ -42,6 +42,6 @@ limitations under the License.
 Twitter4J は JSON レスポンスの解析のため JSON.org のソフトウェアを含んでいます。
 JSON.org のソフトウェアのライセンスについては[The JSON License][2]をご覧ください。
 
-[1]http://twitter4j.org/
-[2]http://www.json.org/license.html
+[1]: http://twitter4j.org/
+[2]: http://www.json.org/license.html
 
