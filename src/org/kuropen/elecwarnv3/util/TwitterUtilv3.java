@@ -44,8 +44,11 @@ public class TwitterUtilv3 {
 	 * ツイートする
 	 */
 	public void sendTweet(String content) {
+        sendTweet(content, false);
+    }
+	public void sendTweet(String content, boolean testflag) {
 		String status;
-		if(isTestMode) {
+		if(isTestMode || testflag) {
 			status = "【試験】" + content;
 		}else{
 			status = content;

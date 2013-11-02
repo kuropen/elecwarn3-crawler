@@ -42,7 +42,7 @@ public class WebSendAction implements GetInfoListener {
 
 	private String host;
 	private TwitterUtilv3 tu;
-
+	private static final boolean TESTFLAG = false;
 	public WebSendAction(String host, TwitterUtilv3 twUtil) {
 		this.host = host;
 		tu = twUtil;
@@ -77,8 +77,8 @@ public class WebSendAction implements GetInfoListener {
 			ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
 			String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + cal.get(Calendar.MONTH) + "&date=" + cal.get(Calendar.DATE);
 			System.out.println(twMsg);
-			if(ud.getPercentage() >= 90) {
-				tu.sendTweet(twMsg);
+			if(ud.getPercentage() >= 90 || TESTFLAG) {
+				tu.sendTweet(twMsg, TESTFLAG);
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
