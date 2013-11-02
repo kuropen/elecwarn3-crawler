@@ -32,15 +32,20 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import org.kuropen.elecwarnv3.util.TwitterUtilv3;
+
 import co.akabe.common.electricusage.FiveMinDemand;
 import co.akabe.common.electricusage.PeakSupply;
+import co.akabe.elecwarn.ElectricityUsageData;
 
 public class WebSendAction implements GetInfoListener {
 
 	private String host;
+	private TwitterUtilv3 tu;
 
-	public WebSendAction(String host) {
+	public WebSendAction(String host, TwitterUtilv3 twUtil) {
 		this.host = host;
+		tu = twUtil;
 	}
 
 	@Override
@@ -49,8 +54,8 @@ public class WebSendAction implements GetInfoListener {
 		int capacity = supply.getAmount();
 
 		// 最終更新日時を取得する
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("JST"));
 		try {
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("JST"));
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
 			String dateText = demand.getDate();
 			Date date = sdf.parse(dateText);
@@ -62,11 +67,17 @@ public class WebSendAction implements GetInfoListener {
 					+ "&consume=" + usage + "&capacity=" + capacity
 					+ "&recorddate=" + getTime(cal);
 			
+			System.out.println(query);
+			
 			Vector<String> result = readFromURL(query);
 			for(String line : result) {
 				System.out.println(line);
 			}
 
+			ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
+			if(ud.getPercentage() >= 90) {
+				tu.sendTweet(ud.toString());
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

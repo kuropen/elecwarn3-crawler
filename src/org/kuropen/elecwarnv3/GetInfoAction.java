@@ -27,7 +27,7 @@ import co.akabe.common.electricusage.HourlyDemand;
 import co.akabe.common.electricusage.PeakSupply;
 import co.akabe.common.electricusage.SupplyDataFormat;
 
-public class GetInfoAction implements Runnable {
+public class GetInfoAction implements Runnable, Action {
 
 	private ElectricUsageCSVParser parser;
 	private String companyKey;
@@ -47,5 +47,11 @@ public class GetInfoAction implements Runnable {
 		if(supply != null && demand != null) {
 			listener.onInfoGet(companyKey, demand, supply);
 		}
+	}
+
+	@Override
+	public void doAction() {
+		//このクラスのアクションはスレッドで実行する
+		new Thread(this).start();
 	}
 }

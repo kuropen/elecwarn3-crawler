@@ -22,23 +22,45 @@ package org.kuropen.elecwarnv3;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.kuropen.elecwarnv3.util.TwitterUtilv3;
+
 import co.akabe.common.electricusage.ElectricUsageCSVParser;
 
+/**
+ * Elecwarn Bot Ver.3のシェルからの起動クラス。
+ * 基本的に、JavaコマンドでこのクラスをCron経由で呼び出して使う。
+ * 必要なパラメータは今回、完全にシェルスクリプト経由での起動を前提として環境変数に記述する方式をとった。
+ */
 public class ElecwarnBootstrap {
 	public static void main (String[] args) {
-		if(args.length == 0) {
-			System.out.println("Missing web host name.");
+		// 環境変数の取得
+		String sendHost = System.getenv("WEBHOST");
+		String consumerKey = System.getenv("CONSUMER_KEY");
+		String consumerSecret = System.getenv("CONSUMER_SECRET");
+		String userKey = System.getenv("USER_KEY");
+		String userSecret = System.getenv("USER_SECRET");
+		if (sendHost == null || consumerKey == null || consumerSecret == null || userKey == null || userSecret == null) {
+			System.out.println("Missing environment valiable: Please set following environment valiable properly.");
+			System.out.println("Web host name as WEBHOST");
+			System.out.println("Twitter Consumer key as CONSUMER_KEY");
+			System.out.println("Twitter Consumer secret as CONSUMER_SECRET");
+			System.out.println("Twitter User token as USER_KEY");
+			System.out.println("Twitter User secret as USER_SECRET");
 			System.exit(1);
-			return;
 		}
-		String sendHost = args[0];
 		
+		//Twitterインスタンスの取得
+		TwitterUtilv3 twUtil = new TwitterUtilv3(consumerKey, consumerSecret, userKey, userSecret);
+		
+		//現在時刻の取得
 		Calendar cal = Calendar.getInstance();
 		int min = cal.get(Calendar.MINUTE);
 		
-		WebSendAction wsa = new WebSendAction(sendHost);
+		//Webサイト送信アクションの定義
+		WebSendAction wsa = new WebSendAction(sendHost, twUtil);
 		
-		ArrayList<GetInfoAction> actionList = new ArrayList<GetInfoAction>();
+		//情報取得アクションの定義
+		ArrayList<Action> actionList = new ArrayList<Action>();
 		
 		if(min % 5 == 0) {
 			actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokkaido, "hokkaido", wsa));
@@ -55,10 +77,14 @@ public class ElecwarnBootstrap {
 			actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokuriku, "hokuriku", wsa));
 			actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
 		}
+		if(min % 30 == 0) {
+			//30分に1回は定期ツイート（現在の使用率案内）
+			actionList.add(new PeriodicTweetAction(twUtil, cal));
+		}
 		
 		if(actionList.size() > 0) {
-			for(GetInfoAction action : actionList) {
-				new Thread(action).start();
+			for(Action action : actionList) {
+				action.doAction();
 			}
 		}
 		
