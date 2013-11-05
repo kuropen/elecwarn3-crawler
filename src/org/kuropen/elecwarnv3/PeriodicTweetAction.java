@@ -35,7 +35,8 @@ public class PeriodicTweetAction implements Action {
 	
 	@Override
 	public void doAction() {
-		tu.sendTweet("各地の最新の電力使用率の情報は、 http://elecwarn.kuropen.org/ をご覧ください。 (" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + ")");
+		int min = calendar.get(Calendar.MINUTE);
+		tu.sendTweet("各地の最新の電力使用率の情報は、 http://elecwarn.kuropen.org/ をご覧ください。 (" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + String.format("%02d", min) + ")");
 	}
 
 }
