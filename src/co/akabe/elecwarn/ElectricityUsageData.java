@@ -138,7 +138,7 @@ public class ElectricityUsageData implements EPCOInfo,
 	public String toString() {
 		String h = String.format("%02d", cal.get(Calendar.HOUR_OF_DAY));
 		String m = String.format("%02d", cal.get(Calendar.MINUTE));
-		String mo = Integer.toString(cal.get(Calendar.MONTH));
+		String mo = Integer.toString(cal.get(Calendar.MONTH) + 1);
 		String d = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
 		String ret = "【" + companyName + "管内 電力使用状況" + getWarningLevel() + "】 "
 				+ mo + "/" + d + " " + h + ":" + m + "現在 "

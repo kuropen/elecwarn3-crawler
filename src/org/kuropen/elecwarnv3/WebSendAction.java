@@ -75,7 +75,7 @@ public class WebSendAction implements GetInfoListener {
 			}
 
 			ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
-			String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + cal.get(Calendar.MONTH) + "&date=" + cal.get(Calendar.DATE);
+			String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + (cal.get(Calendar.MONTH) + 1) + "&date=" + cal.get(Calendar.DATE);
 			System.out.println(twMsg);
 			if(ud.getPercentage() >= 90 || TESTFLAG) {
 				tu.sendTweet(twMsg, TESTFLAG);
