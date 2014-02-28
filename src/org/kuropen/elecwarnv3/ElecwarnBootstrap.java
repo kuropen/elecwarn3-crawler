@@ -57,7 +57,7 @@ public class ElecwarnBootstrap {
 		int min = cal.get(Calendar.MINUTE);
 		
 		//Webサイト送信アクションの定義
-		WebSendAction wsa = new WebSendAction(sendHost, twUtil);
+		GetInfoListener wsa = new WebSendAction(sendHost, twUtil);
 		
 		//情報取得アクションの定義
 		ArrayList<Action> actionList = new ArrayList<Action>();

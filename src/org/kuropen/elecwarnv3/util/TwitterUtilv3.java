@@ -28,11 +28,6 @@ public class TwitterUtilv3 {
 
 	private Twitter twitter;
 	
-	/**
-	 * テストするときはtrueにする。これにより「試験」とつけてツイートできる。
-	 */
-	public static boolean isTestMode = false;
-	
 	public TwitterUtilv3 (String cKey, String cSecret, String uKey, String uSecret) {
 		twitter = new TwitterFactory().getInstance();
 		twitter.setOAuthConsumer(cKey, cSecret);
@@ -48,7 +43,7 @@ public class TwitterUtilv3 {
 	}
 	public void sendTweet(String content, boolean testflag) {
 		String status;
-		if(isTestMode || testflag) {
+		if(testflag) {
 			status = "【試験】" + content;
 		}else{
 			status = content;

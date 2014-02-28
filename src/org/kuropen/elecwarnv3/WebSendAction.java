@@ -38,6 +38,11 @@ import co.akabe.common.electricusage.FiveMinDemand;
 import co.akabe.common.electricusage.PeakSupply;
 import co.akabe.elecwarn.ElectricityUsageData;
 
+/**
+ * 情報取得後、Webサーバに送信するアクション
+ * Data Registration APIを実装しているアーカイブサイトのサーバに対してのみ有効。
+ * 今後、SQLを用いて直接データを挿入するアクションに置き換え予定。
+ */
 public class WebSendAction implements GetInfoListener {
 
 	private String host;
@@ -77,7 +82,7 @@ public class WebSendAction implements GetInfoListener {
 			ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
 			String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + (cal.get(Calendar.MONTH) + 1) + "&date=" + cal.get(Calendar.DATE);
 			System.out.println(twMsg);
-			if(ud.getPercentage() >= 90 || TESTFLAG) {
+			if(ud.getPercentage() >= 90) {
 				tu.sendTweet(twMsg, TESTFLAG);
 			}
 		} catch (ParseException e) {
@@ -87,10 +92,21 @@ public class WebSendAction implements GetInfoListener {
 		}
 	}
 
+    /**
+     * UNIXタイムスタンプを得る
+     * @param cal カレンダーインスタンス
+     * @return UNIXタイムスタンプ
+     */
 	private long getTime(Calendar cal) {
 		return cal.getTime().getTime() / 1000;
 	}
 
+    /**
+     * URLにアクセスして情報を取得する
+     * @param addr URL
+     * @return 取得した文字列
+     * @throws IOException
+     */
 	private static Vector<String> readFromURL(String addr) throws IOException {
 		System.out.println(addr);
 		URL url = new URL(addr);
