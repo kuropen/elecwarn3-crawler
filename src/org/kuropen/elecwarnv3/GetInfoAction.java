@@ -32,35 +32,36 @@ import co.akabe.common.electricusage.SupplyDataFormat;
  */
 public class GetInfoAction implements Runnable, Action {
 
-	private ElectricUsageCSVParser parser;
-	private String companyKey;
-	private GetInfoListener listener;
+    private ElectricUsageCSVParser parser;
+    private String companyKey;
+    private GetInfoListener listener;
 
     /**
      * コンストラクタ
-     * @param format データフォーマット
-     * @param key 会社名
+     *
+     * @param format   データフォーマット
+     * @param key      会社名
      * @param listener 取得後の処理を定義するリスナー
      */
-	public GetInfoAction (SupplyDataFormat format, String key, GetInfoListener listener) {
-		parser = new ElectricUsageCSVParser(format);
-		companyKey = key;
-		this.listener = listener;
-	}
-	
-	@Override
-	public void run() {
-		Vector<FiveMinDemand> demands = parser.get5MinDemand();
-		PeakSupply supply = parser.getPeakSupply();
-		FiveMinDemand demand = HourlyDemand.seekNearestHistory(demands);
-		if(supply != null && demand != null) {
-			listener.onInfoGet(companyKey, demand, supply);
-		}
-	}
+    public GetInfoAction(SupplyDataFormat format, String key, GetInfoListener listener) {
+        parser = new ElectricUsageCSVParser(format);
+        companyKey = key;
+        this.listener = listener;
+    }
 
-	@Override
-	public void doAction() {
-		//このクラスのアクションはスレッドで実行する
-		new Thread(this).start();
-	}
+    @Override
+    public void run() {
+        Vector<FiveMinDemand> demands = parser.get5MinDemand();
+        PeakSupply supply = parser.getPeakSupply();
+        FiveMinDemand demand = HourlyDemand.seekNearestHistory(demands);
+        if (supply != null && demand != null) {
+            listener.onInfoGet(companyKey, demand, supply);
+        }
+    }
+
+    @Override
+    public void doAction() {
+        //このクラスのアクションはスレッドで実行する
+        new Thread(this).start();
+    }
 }

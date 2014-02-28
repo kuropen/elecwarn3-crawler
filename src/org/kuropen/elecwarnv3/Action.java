@@ -24,9 +24,9 @@ package org.kuropen.elecwarnv3;
  */
 public interface Action {
 
-	/**
-	 * アクションを実行する。
-	 */
-	public void doAction();
-	
+    /**
+     * アクションを実行する。
+     */
+    public void doAction();
+
 }

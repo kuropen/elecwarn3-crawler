@@ -45,87 +45,90 @@ import co.akabe.elecwarn.ElectricityUsageData;
  */
 public class WebSendAction implements GetInfoListener {
 
-	private String host;
-	private TwitterUtilv3 tu;
-	private static final boolean TESTFLAG = false;
-	public WebSendAction(String host, TwitterUtilv3 twUtil) {
-		this.host = host;
-		tu = twUtil;
-	}
+    private String host;
+    private TwitterUtilv3 tu;
+    private static final boolean TESTFLAG = false;
 
-	@Override
-	public void onInfoGet(String key, FiveMinDemand demand, PeakSupply supply) {
-		int usage = demand.getDemandToday();
-		int capacity = supply.getAmount();
+    public WebSendAction(String host, TwitterUtilv3 twUtil) {
+        this.host = host;
+        tu = twUtil;
+    }
 
-		// 最終更新日時を取得する
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("JST"));
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
-			String dateText = demand.getDate();
-			Date date = sdf.parse(dateText);
-			cal.setTime(date);
-			cal.set(Calendar.HOUR_OF_DAY, demand.getHour());
-			cal.set(Calendar.MINUTE, demand.getMinute());
+    @Override
+    public void onInfoGet(String key, FiveMinDemand demand, PeakSupply supply) {
+        int usage = demand.getDemandToday();
+        int capacity = supply.getAmount();
 
-			String query = "http://" + host + "/dataregist?company=" + key
-					+ "&consume=" + usage + "&capacity=" + capacity
-					+ "&recorddate=" + getTime(cal);
-			
-			System.out.println(query);
-			
-			Vector<String> result = readFromURL(query);
-			for(String line : result) {
-				System.out.println(line);
-			}
+        // 最終更新日時を取得する
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("JST"));
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
+            String dateText = demand.getDate();
+            Date date = sdf.parse(dateText);
+            cal.setTime(date);
+            cal.set(Calendar.HOUR_OF_DAY, demand.getHour());
+            cal.set(Calendar.MINUTE, demand.getMinute());
 
-			ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
-			String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + (cal.get(Calendar.MONTH) + 1) + "&date=" + cal.get(Calendar.DATE);
-			System.out.println(twMsg);
-			if(ud.getPercentage() >= 90) {
-				tu.sendTweet(twMsg, TESTFLAG);
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+            String query = "http://" + host + "/dataregist?company=" + key
+                    + "&consume=" + usage + "&capacity=" + capacity
+                    + "&recorddate=" + getTime(cal);
+
+            System.out.println(query);
+
+            Vector<String> result = readFromURL(query);
+            for (String line : result) {
+                System.out.println(line);
+            }
+
+            ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
+            String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + (cal.get(Calendar.MONTH) + 1) + "&date=" + cal.get(Calendar.DATE);
+            System.out.println(twMsg);
+            if (ud.getPercentage() >= 90) {
+                tu.sendTweet(twMsg, TESTFLAG);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * UNIXタイムスタンプを得る
+     *
      * @param cal カレンダーインスタンス
      * @return UNIXタイムスタンプ
      */
-	private long getTime(Calendar cal) {
-		return cal.getTime().getTime() / 1000;
-	}
+    private long getTime(Calendar cal) {
+        return cal.getTime().getTime() / 1000;
+    }
 
     /**
      * URLにアクセスして情報を取得する
+     *
      * @param addr URL
      * @return 取得した文字列
      * @throws IOException
      */
-	private static Vector<String> readFromURL(String addr) throws IOException {
-		System.out.println(addr);
-		URL url = new URL(addr);
-		URLConnection connection = url.openConnection();
-		connection.setDoInput(true);
-		InputStream inStream = connection.getInputStream();
+    private static Vector<String> readFromURL(String addr) throws IOException {
+        System.out.println(addr);
+        URL url = new URL(addr);
+        URLConnection connection = url.openConnection();
+        connection.setDoInput(true);
+        InputStream inStream = connection.getInputStream();
 
-		try {
-			BufferedReader input = new BufferedReader(new InputStreamReader(
-					inStream));
+        try {
+            BufferedReader input = new BufferedReader(new InputStreamReader(
+                    inStream));
 
-			String line = "";
-			Vector<String> ret = new Vector<String>();
-			while ((line = input.readLine()) != null)
-				ret.add(line);
-			return ret;
-		} finally {
-			inStream.close();
-		}
-	}
+            String line = "";
+            Vector<String> ret = new Vector<String>();
+            while ((line = input.readLine()) != null)
+                ret.add(line);
+            return ret;
+        } finally {
+            inStream.close();
+        }
+    }
 
 }

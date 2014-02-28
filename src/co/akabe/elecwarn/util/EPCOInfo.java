@@ -20,20 +20,23 @@ package co.akabe.elecwarn.util;
 
 /**
  * 電力会社の情報を有していることを表すインターフェイス
+ *
  * @author Kuropen
  */
 public interface EPCOInfo {
 
-	/**
-	 * 会社検索キー
-	 * @return
-	 */
-	public String getCompanyKey();
-	
-	/**
-	 * 会社名
-	 * @return
-	 */
-	public String getCompanyName();
-	
+    /**
+     * 会社検索キー
+     *
+     * @return
+     */
+    public String getCompanyKey();
+
+    /**
+     * 会社名
+     *
+     * @return
+     */
+    public String getCompanyName();
+
 }
