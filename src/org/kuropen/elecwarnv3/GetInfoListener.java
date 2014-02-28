@@ -24,6 +24,12 @@ import co.akabe.common.electricusage.PeakSupply;
 
 public interface GetInfoListener {
 
+    /**
+     * 情報を取得した後の処理について記述する
+     * @param key 会社コード
+     * @param demand 需要
+     * @param supply 供給
+     */
 	public void onInfoGet (String key, FiveMinDemand demand, PeakSupply supply);
 	
 }

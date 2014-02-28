@@ -27,12 +27,21 @@ import co.akabe.common.electricusage.HourlyDemand;
 import co.akabe.common.electricusage.PeakSupply;
 import co.akabe.common.electricusage.SupplyDataFormat;
 
+/**
+ * 情報を取得し、CSVパースするアクション
+ */
 public class GetInfoAction implements Runnable, Action {
 
 	private ElectricUsageCSVParser parser;
 	private String companyKey;
 	private GetInfoListener listener;
-	
+
+    /**
+     * コンストラクタ
+     * @param format データフォーマット
+     * @param key 会社名
+     * @param listener 取得後の処理を定義するリスナー
+     */
 	public GetInfoAction (SupplyDataFormat format, String key, GetInfoListener listener) {
 		parser = new ElectricUsageCSVParser(format);
 		companyKey = key;

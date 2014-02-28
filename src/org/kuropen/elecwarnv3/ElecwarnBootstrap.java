@@ -22,6 +22,8 @@ package org.kuropen.elecwarnv3;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
+import org.kuropen.elecwarnv3.settings.DefaultConstants;
 import org.kuropen.elecwarnv3.util.TwitterUtilv3;
 
 import co.akabe.common.electricusage.ElectricUsageCSVParser;
@@ -29,7 +31,6 @@ import co.akabe.common.electricusage.ElectricUsageCSVParser;
 /**
  * Elecwarn Bot Ver.3のシェルからの起動クラス。
  * 基本的に、JavaコマンドでこのクラスをCron経由で呼び出して使う。
- * 必要なパラメータは今回、完全にシェルスクリプト経由での起動を前提として環境変数に記述する方式をとった。
  */
 public class ElecwarnBootstrap {
 	public static void main (String[] args) {
@@ -40,13 +41,11 @@ public class ElecwarnBootstrap {
 		String userKey = System.getenv("USER_KEY");
 		String userSecret = System.getenv("USER_SECRET");
 		if (sendHost == null || consumerKey == null || consumerSecret == null || userKey == null || userSecret == null) {
-			System.out.println("Missing environment valiable: Please set following environment valiable properly.");
-			System.out.println("Web host name as WEBHOST");
-			System.out.println("Twitter Consumer key as CONSUMER_KEY");
-			System.out.println("Twitter Consumer secret as CONSUMER_SECRET");
-			System.out.println("Twitter User token as USER_KEY");
-			System.out.println("Twitter User secret as USER_SECRET");
-			System.exit(1);
+			sendHost = DefaultConstants.WEBHOST;
+            consumerKey = DefaultConstants.CONSUMER_KEY;
+            consumerSecret = DefaultConstants.CONSUMER_SECRET;
+            userKey = DefaultConstants.USER_KEY;
+            userSecret = DefaultConstants.USER_SECRET;
 		}
 		
 		//Twitterインスタンスの取得
@@ -57,7 +56,7 @@ public class ElecwarnBootstrap {
 		int min = cal.get(Calendar.MINUTE);
 		
 		//Webサイト送信アクションの定義
-		WebSendAction wsa = new WebSendAction(sendHost, twUtil);
+		GetInfoListener wsa = new WebSendAction(sendHost, twUtil);
 		
 		//情報取得アクションの定義
 		ArrayList<Action> actionList = new ArrayList<Action>();

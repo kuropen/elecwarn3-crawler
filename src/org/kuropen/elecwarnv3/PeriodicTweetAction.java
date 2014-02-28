@@ -23,6 +23,9 @@ import java.util.Calendar;
 
 import org.kuropen.elecwarnv3.util.TwitterUtilv3;
 
+/**
+ * 定期ツイートアクション
+ */
 public class PeriodicTweetAction implements Action {
 
 	private Calendar calendar;
