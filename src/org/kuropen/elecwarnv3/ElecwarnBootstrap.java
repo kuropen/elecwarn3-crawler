@@ -25,6 +25,8 @@ import java.util.Calendar;
 import org.kuropen.elecwarnv3.util.TwitterUtilv3;
 
 import co.akabe.common.electricusage.ElectricUsageCSVParser;
+import org.kuropen.elecwarnv3.tasks.TweetTask;
+import org.kuropen.elecwarnv3.tasks.WebSendTask;
 
 /**
  * Elecwarn Bot Ver.3のシェルからの起動クラス。
@@ -57,10 +59,13 @@ public class ElecwarnBootstrap {
         int min = cal.get(Calendar.MINUTE);
 
         //Webサイト送信アクションの定義
-        GetInfoListener wsa = new WebSendAction(sendHost, twUtil);
+        ArrayList<AfterInfoGetTask> afterTasks = new ArrayList<>();
+        afterTasks.add(new WebSendTask(sendHost));
+        afterTasks.add(new TweetTask(sendHost, twUtil));
+        GetInfoListener wsa = new AfterInfoGetTaskChain(afterTasks);
 
         //情報取得アクションの定義
-        ArrayList<Action> actionList = new ArrayList<Action>();
+        ArrayList<Action> actionList = new ArrayList<>();
 
         if (min % 5 == 0) {
             actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokkaido, "hokkaido", wsa));
