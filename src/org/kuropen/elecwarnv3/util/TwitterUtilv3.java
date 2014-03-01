@@ -37,11 +37,17 @@ public class TwitterUtilv3 {
 
     /**
      * ツイートする
+     * @param content
      */
     public void sendTweet(String content) {
         sendTweet(content, false);
     }
 
+    /**
+     * ツイートを送信する
+     * @param content
+     * @param testflag 
+     */
     public void sendTweet(String content, boolean testflag) {
         String status;
         if (testflag) {
