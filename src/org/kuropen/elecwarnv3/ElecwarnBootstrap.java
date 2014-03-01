@@ -22,7 +22,6 @@ package org.kuropen.elecwarnv3;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
 import org.kuropen.elecwarnv3.settings.DefaultConstants;
 import org.kuropen.elecwarnv3.util.TwitterUtilv3;
 
