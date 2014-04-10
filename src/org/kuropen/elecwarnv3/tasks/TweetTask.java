@@ -32,7 +32,7 @@ public class TweetTask implements AfterInfoGetTask {
         ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
         String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + (cal.get(Calendar.MONTH) + 1) + "&date=" + cal.get(Calendar.DATE);
         System.out.println(twMsg);
-        if (ud.getPercentage() >= 90) {
+        if (ud.getPercentage() >= 90 && ud.getPercentage() <= 100) { // Avoid tweeting even if infinity
             tu.sendTweet(twMsg, TESTFLAG);
         }
     }
