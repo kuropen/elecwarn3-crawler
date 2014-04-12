@@ -94,5 +94,4 @@ public class ElecwarnBootstrap {
         }
 
     }
->>>>>>> d444723... コードフォーマットの統一、ElectricUsageの更新
 }
