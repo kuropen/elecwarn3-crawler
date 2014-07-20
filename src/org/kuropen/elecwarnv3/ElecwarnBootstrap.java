@@ -50,6 +50,10 @@ public class ElecwarnBootstrap {
             System.out.println("Twitter User secret as USER_SECRET");
             System.exit(1);
         }
+        String pageHost = System.getenv("PAGEHOST");
+        if (pageHost == null) {
+        	pageHost = sendHost;
+        }
 
         //Twitterインスタンスの取得
         TwitterUtilv3 twUtil = new TwitterUtilv3(consumerKey, consumerSecret, userKey, userSecret);
@@ -61,7 +65,7 @@ public class ElecwarnBootstrap {
         //Webサイト送信アクションの定義
         ArrayList<AfterInfoGetTask> afterTasks = new ArrayList<>();
         afterTasks.add(new WebSendTask(sendHost));
-        afterTasks.add(new TweetTask(sendHost, twUtil));
+        afterTasks.add(new TweetTask(pageHost, twUtil));
         GetInfoListener wsa = new AfterInfoGetTaskChain(afterTasks);
 
         //情報取得アクションの定義
