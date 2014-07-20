@@ -84,7 +84,7 @@ public class ElecwarnBootstrap {
         }
         if (min % 10 == 0) {
             actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokuriku, "hokuriku", wsa));
-            //actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
+            actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
         }
         if (min % 30 == 0) {
             //30分に1回は定期ツイート（現在の使用率案内）
