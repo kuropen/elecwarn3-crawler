@@ -41,7 +41,7 @@ public class ElecwarnBootstrap {
         String consumerSecret = System.getenv("CONSUMER_SECRET");
         String userKey = System.getenv("USER_KEY");
         String userSecret = System.getenv("USER_SECRET");
-        if (sendHost == null || consumerKey == null || consumerSecret == null || userKey == null || userSecret == null) {
+        if (sendHost == null) {
             System.out.println("Missing environment valiable: Please set following environment valiable properly.");
             System.out.println("Web host name as WEBHOST");
             System.out.println("Twitter Consumer key as CONSUMER_KEY");
@@ -54,22 +54,29 @@ public class ElecwarnBootstrap {
         if (pageHost == null) {
         	pageHost = sendHost;
         }
-
-        //Twitterインスタンスの取得
-        TwitterUtilv3 twUtil = new TwitterUtilv3(consumerKey, consumerSecret, userKey, userSecret);
+        
 
         //現在時刻の取得
         Calendar cal = Calendar.getInstance();
         int min = cal.get(Calendar.MINUTE);
 
+        ArrayList<Action> actionList = new ArrayList<>();
+        
         //Webサイト送信アクションの定義
         ArrayList<AfterInfoGetTask> afterTasks = new ArrayList<>();
         afterTasks.add(new WebSendTask(sendHost));
-        afterTasks.add(new TweetTask(pageHost, twUtil));
+        if (consumerKey == null || consumerSecret == null || userKey == null || userSecret == null) {
+        	//Twitterインスタンスの取得
+            TwitterUtilv3 twUtil = new TwitterUtilv3(consumerKey, consumerSecret, userKey, userSecret);
+            afterTasks.add(new TweetTask(pageHost, twUtil));
+            if (min % 30 == 0) {
+                //30分に1回は定期ツイート（現在の使用率案内）
+                actionList.add(new PeriodicTweetAction(twUtil, cal));
+            }
+        }
         GetInfoListener wsa = new AfterInfoGetTaskChain(afterTasks);
 
         //情報取得アクションの定義
-        ArrayList<Action> actionList = new ArrayList<>();
 
         if (min % 5 == 0) {
             actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokkaido, "hokkaido", wsa));
@@ -85,10 +92,6 @@ public class ElecwarnBootstrap {
         if (min % 10 == 0) {
             actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokuriku, "hokuriku", wsa));
             actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
-        }
-        if (min % 30 == 0) {
-            //30分に1回は定期ツイート（現在の使用率案内）
-            actionList.add(new PeriodicTweetAction(twUtil, cal));
         }
 
         if (actionList.size() > 0) {
