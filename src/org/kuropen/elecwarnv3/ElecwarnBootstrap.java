@@ -66,6 +66,8 @@ public class ElecwarnBootstrap {
         ArrayList<AfterInfoGetTask> afterTasks = new ArrayList<>();
         afterTasks.add(new WebSendTask(sendHost));
         if (consumerKey == null || consumerSecret == null || userKey == null || userSecret == null) {
+		// Twitter認証情報がないのでTwitterは追加しない
+	}else{
         	//Twitterインスタンスの取得
             TwitterUtilv3 twUtil = new TwitterUtilv3(consumerKey, consumerSecret, userKey, userSecret);
             afterTasks.add(new TweetTask(pageHost, twUtil));
