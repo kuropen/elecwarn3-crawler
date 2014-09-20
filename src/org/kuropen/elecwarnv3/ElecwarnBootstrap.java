@@ -22,7 +22,6 @@ package org.kuropen.elecwarnv3;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import org.kuropen.elecwarnv3.settings.DefaultConstants;
 import org.kuropen.elecwarnv3.util.TwitterUtilv3;
 
 import co.akabe.common.electricusage.ElectricUsageCSVParser;
@@ -32,6 +31,7 @@ import org.kuropen.elecwarnv3.tasks.WebSendTask;
 /**
  * Elecwarn Bot Ver.3のシェルからの起動クラス。
  * 基本的に、JavaコマンドでこのクラスをCron経由で呼び出して使う。
+ * 必要なパラメータは今回、完全にシェルスクリプト経由での起動を前提として環境変数に記述する方式をとった。
  */
 public class ElecwarnBootstrap {
     public static void main(String[] args) {
@@ -41,29 +41,44 @@ public class ElecwarnBootstrap {
         String consumerSecret = System.getenv("CONSUMER_SECRET");
         String userKey = System.getenv("USER_KEY");
         String userSecret = System.getenv("USER_SECRET");
-        if (sendHost == null || consumerKey == null || consumerSecret == null || userKey == null || userSecret == null) {
-            sendHost = DefaultConstants.WEBHOST;
-            consumerKey = DefaultConstants.CONSUMER_KEY;
-            consumerSecret = DefaultConstants.CONSUMER_SECRET;
-            userKey = DefaultConstants.USER_KEY;
-            userSecret = DefaultConstants.USER_SECRET;
+        if (sendHost == null) {
+            System.out.println("Missing environment valiable: Please set following environment valiable properly.");
+            System.out.println("Web host name as WEBHOST");
+            System.out.println("Twitter Consumer key as CONSUMER_KEY");
+            System.out.println("Twitter Consumer secret as CONSUMER_SECRET");
+            System.out.println("Twitter User token as USER_KEY");
+            System.out.println("Twitter User secret as USER_SECRET");
+            System.exit(1);
         }
-
-        //Twitterインスタンスの取得
-        TwitterUtilv3 twUtil = new TwitterUtilv3(consumerKey, consumerSecret, userKey, userSecret);
+        String pageHost = System.getenv("PAGEHOST");
+        if (pageHost == null) {
+        	pageHost = sendHost;
+        }
+        
 
         //現在時刻の取得
         Calendar cal = Calendar.getInstance();
         int min = cal.get(Calendar.MINUTE);
 
+        ArrayList<Action> actionList = new ArrayList<>();
+        
         //Webサイト送信アクションの定義
         ArrayList<AfterInfoGetTask> afterTasks = new ArrayList<>();
         afterTasks.add(new WebSendTask(sendHost));
-        afterTasks.add(new TweetTask(sendHost, twUtil));
+        if (consumerKey == null || consumerSecret == null || userKey == null || userSecret == null) {
+		// Twitter認証情報がないのでTwitterは追加しない
+	}else{
+        	//Twitterインスタンスの取得
+            TwitterUtilv3 twUtil = new TwitterUtilv3(consumerKey, consumerSecret, userKey, userSecret);
+            afterTasks.add(new TweetTask(pageHost, twUtil));
+            if (min % 30 == 0) {
+                //30分に1回は定期ツイート（現在の使用率案内）
+                actionList.add(new PeriodicTweetAction(twUtil, cal));
+            }
+        }
         GetInfoListener wsa = new AfterInfoGetTaskChain(afterTasks);
 
         //情報取得アクションの定義
-        ArrayList<Action> actionList = new ArrayList<>();
 
         if (min % 5 == 0) {
             actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokkaido, "hokkaido", wsa));
@@ -78,11 +93,7 @@ public class ElecwarnBootstrap {
         }
         if (min % 10 == 0) {
             actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Hokuriku, "hokuriku", wsa));
-            //actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
-        }
-        if (min % 30 == 0) {
-            //30分に1回は定期ツイート（現在の使用率案内）
-            actionList.add(new PeriodicTweetAction(twUtil, cal));
+            actionList.add(new GetInfoAction(ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
         }
 
         if (actionList.size() > 0) {
