@@ -25,69 +25,74 @@ import org.kuropen.elecwarnv3.AfterInfoGetTask;
  */
 public class WebSendTask implements AfterInfoGetTask {
 
-    private String host;
+	private String host;
 
-    public WebSendTask(String host) {
-        this.host = host;
-    }
-    
-    @Override
-    public void doTask(String key, FiveMinDemand demand, PeakSupply supply, Calendar cal) {
-        try {
-            int usage = demand.getDemandToday();
-            int capacity = supply.getAmount();
-            String query = "http://" + host + "/dataregist?company=" + key
-                    + "&consume=" + usage + "&capacity=" + capacity
-                    + "&recorddate=" + getTime(cal);
+	public WebSendTask(String host) {
+		this.host = host;
+	}
 
-            System.out.println(query);
+	@Override
+	public void doTask(String key, FiveMinDemand demand, PeakSupply supply,
+			Calendar cal) {
+		try {
+			int usage = demand.getDemandToday();
+			int capacity = supply.getAmount();
+			String query = "http://" + host + "/dataregist?company=" + key
+					+ "&consume=" + usage + "&capacity=" + capacity
+					+ "&recorddate=" + getTime(cal);
 
-            ArrayList<String> result = readFromURL(query);
-            for (String line : result) {
-                //TODO ログの出し方
-                System.out.println(line);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(WebSendTask.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    /**
-     * UNIXタイムスタンプを得る
-     *
-     * @param cal カレンダーインスタンス
-     * @return UNIXタイムスタンプ
-     */
-    private long getTime(Calendar cal) {
-        return cal.getTime().getTime() / 1000;
-    }
+			System.out.println(query);
 
-    /**
-     * URLにアクセスして情報を取得する
-     *
-     * @param addr URL
-     * @return 取得した文字列
-     * @throws IOException
-     */
-    private static ArrayList<String> readFromURL(String addr) throws IOException {
-        System.out.println(addr);
-        URL url = new URL(addr);
-        URLConnection connection = url.openConnection();
-        connection.setDoInput(true);
-        InputStream inStream = connection.getInputStream();
+			ArrayList<String> result = readFromURL(query);
+			for (String line : result) {
+				// TODO ログの出し方
+				System.out.println(line);
+			}
+		} catch (IOException ex) {
+			Logger.getLogger(WebSendTask.class.getName()).log(Level.SEVERE,
+					null, ex);
+		}
+	}
 
-        try {
-            BufferedReader input = new BufferedReader(new InputStreamReader(
-                    inStream));
+	/**
+	 * UNIXタイムスタンプを得る
+	 * 
+	 * @param cal
+	 *            カレンダーインスタンス
+	 * @return UNIXタイムスタンプ
+	 */
+	private long getTime(Calendar cal) {
+		return cal.getTime().getTime() / 1000;
+	}
 
-            String line = "";
-            ArrayList<String> ret = new ArrayList<>();
-            while ((line = input.readLine()) != null)
-                ret.add(line);
-            return ret;
-        } finally {
-            inStream.close();
-        }
-    }
-    
+	/**
+	 * URLにアクセスして情報を取得する
+	 * 
+	 * @param addr
+	 *            URL
+	 * @return 取得した文字列
+	 * @throws IOException
+	 */
+	private static ArrayList<String> readFromURL(String addr)
+			throws IOException {
+		System.out.println(addr);
+		URL url = new URL(addr);
+		URLConnection connection = url.openConnection();
+		connection.setDoInput(true);
+		InputStream inStream = connection.getInputStream();
+
+		try {
+			BufferedReader input = new BufferedReader(new InputStreamReader(
+					inStream));
+
+			String line = "";
+			ArrayList<String> ret = new ArrayList<>();
+			while ((line = input.readLine()) != null)
+				ret.add(line);
+			return ret;
+		} finally {
+			inStream.close();
+		}
+	}
+
 }

@@ -22,35 +22,38 @@ import java.util.logging.Logger;
  */
 public class AfterInfoGetTaskChain implements GetInfoListener {
 
-    private List<AfterInfoGetTask> tasks;
-    
-    /**
-     * コンストラクタ
-     * @param lst タスクの一覧
-     */
-    public AfterInfoGetTaskChain (List<AfterInfoGetTask> lst) {
-        tasks = lst;
-    }
-    
-    @Override
-    public void onInfoGet(String key, FiveMinDemand demand, PeakSupply supply) {
-        try {
-            // 最終更新日時を取得する
-            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("JST"));
-            
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
-            String dateText = demand.getDate();
-            Date date = sdf.parse(dateText);
-            cal.setTime(date);
-            cal.set(Calendar.HOUR_OF_DAY, demand.getHour());
-            cal.set(Calendar.MINUTE, demand.getMinute());
-            
-            for (AfterInfoGetTask task : tasks) {
-                task.doTask(key, demand, supply, cal);
-            }
-        } catch (ParseException ex) {
-            Logger.getLogger(AfterInfoGetTaskChain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+	private List<AfterInfoGetTask> tasks;
+
+	/**
+	 * コンストラクタ
+	 * 
+	 * @param lst
+	 *            タスクの一覧
+	 */
+	public AfterInfoGetTaskChain(List<AfterInfoGetTask> lst) {
+		tasks = lst;
+	}
+
+	@Override
+	public void onInfoGet(String key, FiveMinDemand demand, PeakSupply supply) {
+		try {
+			// 最終更新日時を取得する
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("JST"));
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
+			String dateText = demand.getDate();
+			Date date = sdf.parse(dateText);
+			cal.setTime(date);
+			cal.set(Calendar.HOUR_OF_DAY, demand.getHour());
+			cal.set(Calendar.MINUTE, demand.getMinute());
+
+			for (AfterInfoGetTask task : tasks) {
+				task.doTask(key, demand, supply, cal);
+			}
+		} catch (ParseException ex) {
+			Logger.getLogger(AfterInfoGetTaskChain.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
+	}
+
 }

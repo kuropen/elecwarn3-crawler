@@ -13,28 +13,34 @@ import org.kuropen.elecwarnv3.AfterInfoGetTask;
 import org.kuropen.elecwarnv3.util.TwitterUtilv3;
 
 /**
- *
+ * 
  * @author Hirochika
  */
 public class TweetTask implements AfterInfoGetTask {
 
-    private static final boolean TESTFLAG = false;
-    private TwitterUtilv3 tu;
-    private String host;
+	private static final boolean TESTFLAG = false;
+	private TwitterUtilv3 tu;
+	private String host;
 
-    public TweetTask(String host, TwitterUtilv3 util) {
-        tu = util;
-        this.host = host;
-    }
+	public TweetTask(String host, TwitterUtilv3 util) {
+		tu = util;
+		this.host = host;
+	}
 
-    @Override
-    public void doTask(String key, FiveMinDemand demand, PeakSupply supply, Calendar cal) {
-        ElectricityUsageData ud = new ElectricityUsageData(key, demand.getDemandToday(), supply.getAmount(), cal);
-        String twMsg = ud.toString() + " http://" + host + "/" + key + "?year=" + cal.get(Calendar.YEAR) + "&month=" + (cal.get(Calendar.MONTH) + 1) + "&date=" + cal.get(Calendar.DATE);
-        System.out.println(twMsg);
-        if (ud.getPercentage() >= 90 && ud.getPercentage() <= 100) { // Avoid tweeting even if infinity
-            tu.sendTweet(twMsg, TESTFLAG);
-        }
-    }
+	@Override
+	public void doTask(String key, FiveMinDemand demand, PeakSupply supply,
+			Calendar cal) {
+		ElectricityUsageData ud = new ElectricityUsageData(key,
+				demand.getDemandToday(), supply.getAmount(), cal);
+		String twMsg = ud.toString() + " http://" + host + "/" + key + "?year="
+				+ cal.get(Calendar.YEAR) + "&month="
+				+ (cal.get(Calendar.MONTH) + 1) + "&date="
+				+ cal.get(Calendar.DATE);
+		System.out.println(twMsg);
+		// Avoid tweeting if infinity
+		if (ud.getPercentage() >= 90 && ud.getPercentage() <= 100) {
+			tu.sendTweet(twMsg, TESTFLAG);
+		}
+	}
 
 }
