@@ -1,8 +1,10 @@
 # Electricity Warning Crawler, Version 3
 
-第3世代電力使用率警報bot (elecwarn3) プロジェクトのうち、使用率の取得とサーバーへの送信を担当する部分です。
+[ ![Codeship Status for kuropen/elecwarn3-crawler](https://www.codeship.io/projects/7b59b840-32bb-0132-a6d8-3a623e75de45/status?branch=public)](https://www.codeship.io/projects/40455)
 
-## ライセンス
+This is the crawler of Electricity Warning project. Gathering data about usage of electricity in Japan except Okinawa area.
+
+## License
 
 Copyright (C) 2011-2013 Kuropen.
 
@@ -22,8 +24,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 ----
 
-このプロジェクトは[Twitter4J][1]のコンポーネントを含んでいます。
-Twitter4Jのライセンスを下記に示します。
+This project includes [Twitter4J][1], which licensed under the term below:
 
 Copyright 2007 Yusuke Yamamoto
 
@@ -39,8 +40,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Twitter4J は JSON レスポンスの解析のため JSON.org のソフトウェアを含んでいます。
-JSON.org のソフトウェアのライセンスについては[The JSON License][2]をご覧ください。
+Twitter4J includes software from JSON.org.
+Please refer to [The JSON License][2] about the license of such software.
 
 [1]: http://twitter4j.org/
 [2]: http://www.json.org/license.html
