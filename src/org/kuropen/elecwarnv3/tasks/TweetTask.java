@@ -45,7 +45,7 @@ public class TweetTask implements AfterInfoGetTask {
 			Calendar cal) {
 		ElectricityUsageData ud = new ElectricityUsageData(key,
 				demand.getDemandToday(), supply.getAmount(), cal);
-		String twMsg = ud.toString() + " http://" + host + "/" + key + "?year="
+		String twMsg = ud.toString() + " https://" + host + "/" + key + "?year="
 				+ cal.get(Calendar.YEAR) + "&month="
 				+ (cal.get(Calendar.MONTH) + 1) + "&date="
 				+ cal.get(Calendar.DATE);

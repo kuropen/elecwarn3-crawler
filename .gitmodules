@@ -1,3 +1,4 @@
 [submodule "ElectricUsage"]
 	path = ElectricUsage
 	url = https://github.com/kuropen/ElectricUsage.git
+    ignore = dirty
