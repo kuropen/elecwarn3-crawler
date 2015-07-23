@@ -90,6 +90,8 @@ public class ElecwarnBootstrap {
 					ElectricUsageCSVParser.Format_Tokyo, "tokyo", wsa));
 			actionList.add(new GetInfoAction(ElectricUsageCSVParser
 					.buildKyushuFormat(), "kyushu", wsa));
+			actionList.add(new GetInfoAction(
+					ElectricUsageCSVParser.Format_Hokuriku, "hokuriku", wsa));
 		}
 		if (min % 6 == 0) {
 			actionList.add(new GetInfoAction(
@@ -100,8 +102,6 @@ public class ElecwarnBootstrap {
 					ElectricUsageCSVParser.Format_Shikoku, "shikoku", wsa));
 		}
 		if (min % 10 == 0) {
-			actionList.add(new GetInfoAction(
-					ElectricUsageCSVParser.Format_Hokuriku, "hokuriku", wsa));
 			actionList.add(new GetInfoAction(
 					ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
 		}
