@@ -22,11 +22,11 @@ package org.kuropen.elecwarnv3;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.kuropen.elecwarnv3.tasks.TweetTask;
+import org.kuropen.elecwarnv3.tasks.WebSendTask;
 import org.kuropen.elecwarnv3.util.TwitterUtilv3;
 
 import co.akabe.common.electricusage.ElectricUsageCSVParser;
-import org.kuropen.elecwarnv3.tasks.TweetTask;
-import org.kuropen.elecwarnv3.tasks.WebSendTask;
 
 /**
  * Elecwarn Bot Ver.3のシェルからの起動クラス。 基本的に、JavaコマンドでこのクラスをCron経由で呼び出して使う。
@@ -85,13 +85,13 @@ public class ElecwarnBootstrap {
 			actionList.add(new GetInfoAction(
 					ElectricUsageCSVParser.Format_Hokkaido, "hokkaido", wsa));
 			actionList.add(new GetInfoAction(
-					ElectricUsageCSVParser.Format_Tohoku, "tohoku", wsa));
+					ElectricUsageCSVParser.buildTohokuFormat(), "tohoku", wsa));
 			actionList.add(new GetInfoAction(
 					ElectricUsageCSVParser.Format_Tokyo, "tokyo", wsa));
 			actionList.add(new GetInfoAction(ElectricUsageCSVParser
 					.buildKyushuFormat(), "kyushu", wsa));
 			actionList.add(new GetInfoAction(
-					ElectricUsageCSVParser.Format_Hokuriku, "hokuriku", wsa));
+					ElectricUsageCSVParser.buildHokurikuFormat(), "hokuriku", wsa));
 		}
 		if (min % 6 == 0) {
 			actionList.add(new GetInfoAction(
@@ -103,7 +103,7 @@ public class ElecwarnBootstrap {
 		}
 		if (min % 10 == 0) {
 			actionList.add(new GetInfoAction(
-					ElectricUsageCSVParser.Format_Chugoku, "chugoku", wsa));
+					ElectricUsageCSVParser.buildChugokuFormat(), "chugoku", wsa));
 		}
 
 		if (actionList.size() > 0) {
